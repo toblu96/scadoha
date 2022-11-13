@@ -24,7 +24,6 @@ async function createProject() {
     },
     initialCache: false,
   });
-  console.log(data.value);
   await refresh();
 }
 async function deleteProject(id: string) {
