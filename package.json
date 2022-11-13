@@ -8,6 +8,10 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "nuxt": "3.0.0-rc.13"
+    "nuxt": "3.0.0-rc.13",
+    "prisma": "^4.6.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.6.1"
   }
 }

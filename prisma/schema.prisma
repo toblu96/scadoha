@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./data/dev.db"
+}
+
+model User {
+  id       String    @id @default(cuid())
+  name     String?
+  password String?
+  projects Project[]
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  admins      User[]
+  devices     Device[]
+}
+
+model Device {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  projects    Project[]
+  tags        Tag[]
+}
+
+model Tag {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  devices     Device  @relation(fields: [deviceId], references: [id])
+  deviceId    String
+  /// HTTP, MQTT OR OPC_UA
+  type        String
+}
