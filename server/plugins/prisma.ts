@@ -27,6 +27,17 @@ export default defineNitroPlugin(async (nitroApp) => {
           create: {
             name: "First Project",
             description: "This project got auto created.",
+            devices: {
+              create: {
+                name: "My first device",
+                tags: {
+                  create: {
+                    name: "First value",
+                    type: "MQTT",
+                  },
+                },
+              },
+            },
           },
         },
       },

@@ -1,14 +1,17 @@
 <template>
-  <h1>{{ $route.params.id }}</h1>
+  <h1>Project {{ $route.params.projectid }}</h1>
   <NuxtLink to="/">Back</NuxtLink>
 
-  <div>hello from project {{ $route.params.id }}</div>
   <h2>Devices</h2>
   <input type="text" v-model="deviceName" />
   <button @click="createDevice">Add device</button>
   <ul>
     <li v-for="device in data?.devices">
       {{ device.id }} | {{ device.name }}
+      <NuxtLink
+        :to="`/projects/${$route.params.projectid}/devices/${device.id}`"
+        >Show</NuxtLink
+      >
       <button @click="deleteDevice(device.id)">Delete</button>
     </li>
   </ul>
@@ -18,9 +21,9 @@ const deviceName = ref("");
 const route = useRoute();
 const { data, refresh } = await useFetch(`/api/devices`, {
   query: {
-    project: route.params.id,
+    project: route.params.projectid,
   },
-  key: route.params.id as string,
+  key: route.params.projectid as string,
 });
 
 async function createDevice() {
@@ -28,7 +31,7 @@ async function createDevice() {
     method: "POST",
     body: {
       name: deviceName.value,
-      projectId: route.params.id,
+      projectId: route.params.projectid,
     },
     initialCache: false,
   });
