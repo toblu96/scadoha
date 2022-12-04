@@ -16,6 +16,7 @@
 <script setup lang="ts">
 const tagName = ref("");
 const route = useRoute();
+
 const { data, refresh } = await useFetch(
   `/api/devices/${route.params.deviceid}/tags`,
   {
@@ -33,7 +34,6 @@ async function createTag() {
       name: tagName.value,
       deviceId: route.params.deviceid,
     },
-    initialCache: false,
   });
   await refresh();
 }
@@ -42,7 +42,6 @@ async function deleteTag(id: string) {
     `/api/devices/${route.params.deviceid}/tags/${id}`,
     {
       method: "DELETE",
-      initialCache: false,
     }
   );
   await refresh();

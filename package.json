@@ -8,10 +8,15 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "nuxt": "3.0.0-rc.13",
+    "nuxt": "^3.0.0",
     "prisma": "^4.6.1"
   },
   "dependencies": {
-    "@prisma/client": "^4.6.1"
+    "@prisma/client": "^4.6.1",
+    "@trpc/client": "^10.3.0",
+    "@trpc/server": "^10.3.0",
+    "prisma-trpc-generator": "^0.6.1",
+    "trpc-nuxt": "^0.4.3",
+    "zod": "^3.19.1"
   }
 }

@@ -1,12 +1,12 @@
 export default defineEventHandler(async (event) => {
   let db = globalThis.db;
-  let query = useQuery(event);
+  let { project } = getQuery(event);
 
   let devices = await db.device.findMany({
     where: {
       projects: {
         some: {
-          id: query.project as string,
+          id: project as string,
         },
       },
     },

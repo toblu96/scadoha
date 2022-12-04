@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
   let db = globalThis.db;
-  let body = await useBody(event);
+  let body = await readBody(event);
 
   let tag = await db.tag.create({
     data: {

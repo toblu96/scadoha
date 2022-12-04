@@ -2,6 +2,13 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator trpc {
+  provider       = "prisma-trpc-generator"
+  withMiddleware = false
+  withShield     = false
+  contextPath    = "../../../../server/trpc/context"
+}
+
 datasource db {
   provider = "sqlite"
   url      = "file:../data/dev.db"
