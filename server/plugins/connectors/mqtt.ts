@@ -1,4 +1,5 @@
 import { connect } from "mqtt"; // import connect from mqtt
+import { z } from "zod";
 
 export default defineNitroPlugin((nitroApp) => {
   let client = connect("mqtt://broker.emqx.io"); // create a client
@@ -38,14 +39,28 @@ export default defineNitroPlugin((nitroApp) => {
       return;
     }
 
-    // TODO: validate mqtt payload
+    // validate mqtt payload
+    const singleValueSchema = z.object({
+      value: z.string(),
+    });
+
+    let parse = singleValueSchema.safeParse(JSON.parse(message.toString()));
+    if (!parse.success) {
+      console.log(
+        `Received data does not match schema for device ${deviceId} and tag ${tagId}. \n ${parse.error}`
+      );
+      return;
+    }
 
     // build mqtt payload
     let payload = {
       timeUTC: Date.now().toString(),
       device: deviceId,
       tag: tagId,
-      data: JSON.parse(message.toString()),
+      schema: "singleValue",
+      data: {
+        value: parse.data.value,
+      },
     };
 
     // send payload to interpreter service (nuxt hooks) e.g. `connector:mqtt:new-data` with payload {device: "", tag: "", timeUTC: "", data: {}}
