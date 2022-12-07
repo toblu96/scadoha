@@ -22,11 +22,12 @@ model User {
 }
 
 model Project {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   name        String
   description String?
   admins      User[]
   devices     Device[]
+  mqttBrokers MqttBroker[]
 }
 
 model Device {
@@ -34,9 +35,12 @@ model Device {
   name        String
   description String?
   projects    Project[]
+  /// @deprecated use mqttTags or similar
   tags        Tag[]
+  mqttTags    MqttTag[]
 }
 
+// depreciated, replaced by MqttTag (future proof for others like OPCUATag etc.)
 model Tag {
   id          String  @id @default(cuid())
   name        String
@@ -45,4 +49,31 @@ model Tag {
   deviceId    String
   /// HTTP, MQTT OR OPC_UA
   type        String
+}
+
+model MqttBroker {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  url         String
+  username    String?
+  password    String?
+  tags        MqttTag[]
+  Project     Project?  @relation(fields: [projectId], references: [id])
+  projectId   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model MqttTag {
+  id           String      @id @default(cuid())
+  name         String
+  description  String?
+  topic        String
+  MqttBroker   MqttBroker? @relation(fields: [mqttBrokerId], references: [id])
+  mqttBrokerId String?
+  Device       Device?     @relation(fields: [deviceId], references: [id])
+  deviceId     String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
