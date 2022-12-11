@@ -19,7 +19,11 @@ export default defineNitroPlugin(async (nitroApp) => {
     },
   });
   if (!user) {
-    await globalThis.db.user.create({
+    // create initial data
+    let data = await globalThis.db.user.create({
+      include: {
+        projects: true,
+      },
       data: {
         name: "admin",
         password: "admin",
@@ -34,6 +38,19 @@ export default defineNitroPlugin(async (nitroApp) => {
                   create: {
                     name: "First value",
                     type: "MQTT",
+                  },
+                },
+              },
+            },
+            mqttBrokers: {
+              create: {
+                name: "EMQX Test Broker",
+                description: "Initial test broker for connection tests.",
+                url: "mqtt://broker.emqx.io",
+                tags: {
+                  create: {
+                    name: "Test Tag",
+                    topic: "tbl/nuxt/#",
                   },
                 },
               },
