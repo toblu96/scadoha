@@ -6,7 +6,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "prisma:schemachange": "npx prisma migrate dev && npx prisma generate"
+    "prisma:schemachange": "npx prisma migrate dev && npx prisma generate",
+    "studio": "prisma studio"
   },
   "devDependencies": {
     "nuxt": "^3.0.0",
