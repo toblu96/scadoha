@@ -11,15 +11,15 @@
   },
   "devDependencies": {
     "nuxt": "^3.0.0",
-    "prisma": "^4.6.1"
+    "prisma": "^4.8.0"
   },
   "dependencies": {
     "@prisma/client": "^4.6.1",
-    "@trpc/client": "^10.3.0",
-    "@trpc/server": "^10.3.0",
+    "@trpc/client": "^10.7.0",
+    "@trpc/server": "^10.7.0",
     "mqtt": "^4.3.7",
-    "prisma-trpc-generator": "^0.6.1",
-    "trpc-nuxt": "^0.4.3",
-    "zod": "^3.19.1"
+    "prisma-trpc-generator": "^0.8.1",
+    "trpc-nuxt": "^0.3.7",
+    "zod": "^3.20.2"
   }
 }
