@@ -165,6 +165,7 @@ async function connectMQTTClient(
     }
 
     // subscribe to all topics
+    // TODO: Subscribe to mqtt topics and remove legacy ones
     for (const tag of broker.tags) {
       client.subscribe(tag.topic, function (err) {
         if (err) {
