@@ -10,6 +10,7 @@
     "studio": "prisma studio"
   },
   "devDependencies": {
+    "@nuxtjs/supabase": "^0.3.0",
     "nuxt": "^3.0.0",
     "prisma": "^4.6.1"
   },
