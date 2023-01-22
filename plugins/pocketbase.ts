@@ -9,6 +9,7 @@ interface ICookie {
 export default defineNuxtPlugin(async () => {
   const pb = new PocketBase("http://127.0.0.1:8090");
   const user = usePocketbaseUser();
+  const router = useRouter();
 
   const cookie = useCookie<ICookie>("pb_auth", {
     path: "/",
@@ -29,7 +30,7 @@ export default defineNuxtPlugin(async () => {
     };
 
     // update state in composable
-    user.value = null; // prevent hydration error if login called a second time from other user without logout first
+    // user.value = null; // prevent hydration error if login called a second time from other user without logout first
     pb.authStore.isValid && pb.authStore.model
       ? (user.value = {
           avatar: pb.authStore.model.avatar,
@@ -45,6 +46,20 @@ export default defineNuxtPlugin(async () => {
           verified: pb.authStore.model.verified,
         })
       : (user.value = null);
+
+    // login/logout redirect
+    if (pb.authStore.isValid) {
+      // TODO: only redirect from login page and if there is an open redirect
+      if (router.currentRoute.value.path == "/login") {
+        let path = "/";
+        if (!router.resolve(path).name) router.push({ path: "/" });
+
+        router.push({ path: "/test" });
+      }
+    } else {
+      // TODO: store redirect
+      router.push({ path: "/login" });
+    }
   });
 
   try {
