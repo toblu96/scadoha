@@ -1,6 +1,6 @@
-# Development
+# Nuxt 3 Minimal Starter
 
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
 ## Setup
 
@@ -14,7 +14,7 @@ yarn install
 npm install
 
 # pnpm
-pnpm install --shamefully-hoist
+pnpm install
 ```
 
 ## Development Server
@@ -39,18 +39,4 @@ Locally preview production build:
 npm run preview
 ```
 
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
-
-## Prisma schema change
-
-Migrate existing data in dev DB.
-
-```bash
-npx prisma migrate dev
-```
-
-Update Prisma client for coding. You need to restart TS server to apply changes in VS Code.
-
-```bash
-npx prisma generate
-```
+Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
