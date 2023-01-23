@@ -1,6 +1,6 @@
 // plugins/pocketbase.js
 import PocketBase, { Admin, Record } from "pocketbase";
-
+import { useRouter } from "#app";
 interface ICookie {
   token: string;
   model: Record | Admin | null;
@@ -49,15 +49,8 @@ export default defineNuxtPlugin(async () => {
 
     // login/logout redirect
     if (pb.authStore.isValid) {
-      // TODO: only redirect from login page and if there is an open redirect
-      if (router.currentRoute.value.path == "/login") {
-        let path = "/";
-        if (!router.resolve(path).name) router.push({ path: "/" });
-
-        router.push({ path: "/test" });
-      }
+      router.push({ path: "/" });
     } else {
-      // TODO: store redirect
       router.push({ path: "/login" });
     }
   });
@@ -85,6 +78,22 @@ export default defineNuxtPlugin(async () => {
     pb.authStore.clear();
     user.value = null;
   }
+
+  // define middleware inline
+  addRouteMiddleware(
+    "pocketbase-auth",
+    (to) => {
+      // Do not redirect for login and callback pages
+      if (["/login"].includes(to.path)) {
+        return;
+      }
+      // check if user is logged in
+      if (!useNuxtApp().$pb.authStore.isValid) {
+        return "/login";
+      }
+    },
+    { global: true }
+  );
 
   return {
     provide: { pb },
