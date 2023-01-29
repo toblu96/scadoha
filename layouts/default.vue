@@ -332,7 +332,9 @@
       </nav>
 
       <!-- Main area -->
-      <main class="min-w-0 flex-1 border-t border-gray-200 p-4 lg:flex">
+      <main
+        class="mx-auto min-w-0 max-w-6xl flex-1 border-t border-gray-200 p-4 lg:flex"
+      >
         <slot />
       </main>
     </div>
