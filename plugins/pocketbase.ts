@@ -24,6 +24,9 @@ export default defineNuxtPlugin(async () => {
 
   // send back the default 'pb_auth' cookie to the client with the latest store state
   pb.authStore.onChange(async () => {
+    // check if user was already logged in
+    let isUserAlreadyLoggedIn = cookie.value?.token != "";
+
     cookie.value = {
       token: pb.authStore.token,
       model: pb.authStore.model,
@@ -59,9 +62,10 @@ export default defineNuxtPlugin(async () => {
       : (user.value = null);
 
     // login/logout redirect
-    if (pb.authStore.isValid) {
+    if (pb.authStore.isValid && !isUserAlreadyLoggedIn) {
       router.push({ path: "/" });
-    } else {
+    }
+    if (!pb.authStore.isValid) {
       router.push({ path: "/login" });
     }
   });
@@ -105,6 +109,7 @@ export default defineNuxtPlugin(async () => {
   addRouteMiddleware(
     "pocketbase-auth",
     (to) => {
+      console.log("jup ", to);
       // Do not redirect for login and callback pages
       if (["/login"].includes(to.path)) {
         return;
@@ -114,7 +119,7 @@ export default defineNuxtPlugin(async () => {
         return "/login";
       }
     },
-    { global: true }
+    { global: false }
   );
 
   return {

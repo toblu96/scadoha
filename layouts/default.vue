@@ -79,9 +79,13 @@
         </div>
         <div class="ml-10 flex flex-shrink-0 items-center space-x-10 pr-4">
           <nav aria-label="Global" class="flex space-x-10">
-            <a href="#" class="text-sm font-medium text-gray-900">Inboxes</a>
-            <a href="#" class="text-sm font-medium text-gray-900">Reporting</a>
-            <a href="#" class="text-sm font-medium text-gray-900">Settings</a>
+            <a
+              v-for="nav in navigation"
+              :key="nav.name"
+              :href="nav.href"
+              class="text-sm font-medium text-gray-900"
+              >{{ nav.name }}</a
+            >
           </nav>
           <div class="flex items-center space-x-8">
             <span class="inline-flex">
@@ -378,16 +382,16 @@ user.value = {
 };
 
 const navigation = [
-  {
-    name: "Inboxes",
-    href: "#",
-    children: [
-      { name: "Technical Support", href: "#" },
-      { name: "Sales", href: "#" },
-      { name: "General", href: "#" },
-    ],
-  },
-  { name: "Reporting", href: "#", children: [] },
+  // {
+  //   name: "Inboxes",
+  //   href: "#",
+  //   children: [
+  //     { name: "Technical Support", href: "#" },
+  //     { name: "Sales", href: "#" },
+  //     { name: "General", href: "#" },
+  //   ],
+  // },
+  { name: "Projects", href: "/", children: [] },
   { name: "Settings", href: "#", children: [] },
 ];
 const sidebarNavigation = [

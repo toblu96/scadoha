@@ -1,17 +1,10 @@
 <template>
-  <div>
-    <pre>{{ project }}</pre>
+  <div class="w-full">
+    <ProjectPageHeader v-if="project" :project="project" />
+    <p>{{ project }}</p>
   </div>
 </template>
 <script setup lang="ts">
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
-import {
-  BarsArrowUpIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  StarIcon,
-} from "@heroicons/vue/20/solid";
-
 interface IProject {
   id: string;
   name: string;
