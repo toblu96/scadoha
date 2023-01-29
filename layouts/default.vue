@@ -1,26 +1,4 @@
-<!--
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
--->
 <template>
-  <!--
-      This example requires updating your template:
-  
-      ```
-      <html class="h-full bg-gray-100">
-      <body class="h-full overflow-hidden">
-      ```
-    -->
   <div class="flex h-full flex-col">
     <!-- Top nav-->
     <header class="relative flex h-16 flex-shrink-0 items-center bg-white">
@@ -82,7 +60,7 @@
         class="hidden md:flex md:min-w-0 md:flex-1 md:items-center md:justify-between"
       >
         <div class="min-w-0 flex-1">
-          <div
+          <!-- <div
             class="relative max-w-2xl text-gray-400 focus-within:text-gray-500"
           >
             <label for="desktop-search" class="sr-only">Search</label>
@@ -97,7 +75,7 @@
             >
               <MagnifyingGlassIcon class="h-5 w-5" aria-hidden="true" />
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="ml-10 flex flex-shrink-0 items-center space-x-10 pr-4">
           <nav aria-label="Global" class="flex space-x-10">
@@ -121,7 +99,20 @@
                 class="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
               >
                 <span class="sr-only">Open user menu</span>
-                <img class="h-8 w-8 rounded-full" :src="user.imageUrl" alt="" />
+                <img
+                  v-if="user?.imageUrl != ''"
+                  class="h-8 w-8 rounded-full object-cover"
+                  :src="user?.imageUrl"
+                  alt=""
+                />
+                <span
+                  v-else
+                  class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500"
+                >
+                  <span class="text-sm font-medium leading-none text-white">{{
+                    user.acronym
+                  }}</span>
+                </span>
               </MenuButton>
 
               <transition
@@ -147,14 +138,16 @@
                       >
                     </MenuItem>
                     <MenuItem v-slot="{ active }">
-                      <a
-                        href="#"
+                      <button
+                        @click="logout"
                         :class="[
                           active ? 'bg-gray-100' : '',
                           'block px-4 py-2 text-sm text-gray-700',
                         ]"
-                        >Sign Out</a
+                        class="w-full text-left"
                       >
+                        Sign Out
+                      </button>
                     </MenuItem>
                   </div>
                 </MenuItems>
@@ -218,7 +211,7 @@
                     <XMarkIcon class="block h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
-                <div class="max-w-8xl mx-auto mt-2 px-4 sm:px-6">
+                <!-- <div class="max-w-8xl mx-auto mt-2 px-4 sm:px-6">
                   <div
                     class="relative text-gray-400 focus-within:text-gray-500"
                   >
@@ -237,7 +230,7 @@
                       <MagnifyingGlassIcon class="h-5 w-5" aria-hidden="true" />
                     </div>
                   </div>
-                </div>
+                </div> -->
                 <div class="max-w-8xl mx-auto py-3 px-2 sm:px-4">
                   <template v-for="item in navigation" :key="item.name">
                     <a
@@ -258,17 +251,26 @@
                   <div class="max-w-8xl mx-auto flex items-center px-4 sm:px-6">
                     <div class="flex-shrink-0">
                       <img
-                        class="h-10 w-10 rounded-full"
-                        :src="user.imageUrl"
+                        v-if="user?.imageUrl != ''"
+                        class="h-10 w-10 rounded-full object-cover"
+                        :src="user?.imageUrl"
                         alt=""
                       />
+                      <span
+                        v-else
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-500"
+                      >
+                        <span class="font-medium leading-none text-white">{{
+                          user.acronym
+                        }}</span>
+                      </span>
                     </div>
                     <div class="ml-3 min-w-0 flex-1">
                       <div class="truncate text-base font-medium text-gray-800">
-                        {{ user.name }}
+                        {{ user?.name }}
                       </div>
                       <div class="truncate text-sm font-medium text-gray-500">
-                        {{ user.email }}
+                        {{ user?.email }}
                       </div>
                     </div>
                     <a
@@ -281,12 +283,16 @@
                   </div>
                   <div class="max-w-8xl mx-auto mt-3 space-y-1 px-2 sm:px-4">
                     <a
-                      v-for="item in userNavigation"
-                      :key="item.name"
-                      :href="item.href"
+                      href="#"
                       class="block rounded-md py-2 px-3 text-base font-medium text-gray-900 hover:bg-gray-50"
-                      >{{ item.name }}</a
+                      >Your Profile</a
                     >
+                    <button
+                      @click="logout"
+                      class="block w-full rounded-md py-2 px-3 text-left text-base font-medium text-gray-900 hover:bg-gray-50"
+                    >
+                      Sign Out
+                    </button>
                   </div>
                 </div>
               </DialogPanel>
@@ -329,7 +335,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import {
   Dialog,
@@ -354,12 +360,23 @@ import {
   XMarkIcon,
 } from "@heroicons/vue/24/outline";
 
-const user = {
-  name: "Whitney Francis",
-  email: "whitney.francis@example.com",
-  imageUrl:
-    "https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+interface IUser {
+  name: string;
+  email: string;
+  imageUrl: string;
+  acronym: string;
+}
+
+// load user data
+const user = ref<IUser>();
+const pocketbase_user = usePocketbaseUser();
+user.value = {
+  imageUrl: pocketbase_user.value?.avatar as string,
+  email: pocketbase_user.value?.email || "no email provided",
+  name: pocketbase_user.value?.username as string,
+  acronym: pocketbase_user.value?.username.slice(0, 2).toUpperCase() || "NA",
 };
+
 const navigation = [
   {
     name: "Inboxes",
@@ -381,12 +398,16 @@ const sidebarNavigation = [
   { name: "Spam", href: "#", icon: NoSymbolIcon, current: false },
   { name: "Drafts", href: "#", icon: PencilSquareIcon, current: false },
 ];
-const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Sign out", href: "#" },
-];
 
 const mobileMenuOpen = ref(false);
+
+const logout = async () => {
+  try {
+    useNuxtApp().$pb.authStore.clear();
+  } catch (error: any) {
+    console.error(error.message);
+  }
+};
 </script>
 
 <style>

@@ -23,7 +23,7 @@ export default defineNuxtPlugin(async () => {
   pb.authStore.save(cookie.value?.token || "", cookie.value?.model || null);
 
   // send back the default 'pb_auth' cookie to the client with the latest store state
-  pb.authStore.onChange(() => {
+  pb.authStore.onChange(async () => {
     cookie.value = {
       token: pb.authStore.token,
       model: pb.authStore.model,
@@ -31,9 +31,20 @@ export default defineNuxtPlugin(async () => {
 
     // update state in composable
     // user.value = null; // prevent hydration error if login called a second time from other user without logout first
+    let avatarUrl = undefined;
+    if (pb.authStore.model) {
+      try {
+        let userRecord = await pb
+          .collection("users")
+          .getOne(pb.authStore.model.id, { $autoCancel: false });
+        avatarUrl = pb.getFileUrl(userRecord, pb.authStore.model.avatar);
+      } catch (error) {
+        console.error(error);
+      }
+    }
     pb.authStore.isValid && pb.authStore.model
       ? (user.value = {
-          avatar: pb.authStore.model.avatar,
+          avatar: pb.authStore.model.avatar && avatarUrl ? avatarUrl : "",
           created: pb.authStore.model.created,
           email: pb.authStore.model.email,
           id: pb.authStore.model.id,
@@ -59,8 +70,19 @@ export default defineNuxtPlugin(async () => {
     // get an up-to-date auth store state by verifying and refreshing the loaded auth model (if any)
     if (pb.authStore.isValid && pb.authStore.model) {
       await pb.collection("users").authRefresh();
+      let avatarUrl = "";
+      if (pb.authStore.model) {
+        try {
+          let userRecord = await pb
+            .collection("users")
+            .getOne(pb.authStore.model.id, { $autoCancel: false });
+          avatarUrl = pb.getFileUrl(userRecord, pb.authStore.model.avatar);
+        } catch (error) {
+          console.error(error);
+        }
+      }
       user.value = {
-        avatar: pb.authStore.model.avatar,
+        avatar: pb.authStore.model.avatar ? avatarUrl : "",
         created: pb.authStore.model.created,
         email: pb.authStore.model.email,
         id: pb.authStore.model.id,

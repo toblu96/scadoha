@@ -8,6 +8,10 @@ interface IUser {
   id: string;
   isNew: boolean;
   updated: string;
+  emailVisibility: boolean;
+  name: string;
+  username: string;
+  verified: boolean;
 }
 
 export const usePocketbaseUser = (): Ref<IUser | null> => {
