@@ -9,7 +9,6 @@
       v-if="project?.expand.broker.length > 0"
       :brokerTags="project?.expand.broker"
     />
-    <p>{{ project?.expand.broker }}</p>
   </div>
 </template>
 <script setup lang="ts">
