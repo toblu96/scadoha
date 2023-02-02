@@ -47,13 +47,13 @@
                       type="checkbox"
                       class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
                       :checked="
-                        indeterminate || selected.length === brokers.length
+                        indeterminate || selected.length === brokers?.length
                       "
                       :indeterminate="indeterminate"
                       @change="
                         // @ts-ignore
                         selected = $event.target?.checked
-                          ? brokers.map((p) => p.id)
+                          ? brokers?.map((p) => p.id)
                           : []
                       "
                     />
@@ -156,7 +156,7 @@ interface IBroker {
 
 const props = defineProps({
   brokers: {
-    required: true,
+    required: false,
     type: Array as PropType<IBroker[]>,
   },
 });
@@ -165,6 +165,7 @@ const selected = ref<string[]>([]);
 const checked = ref(false);
 const indeterminate = computed(
   () =>
-    selected.value.length > 0 && selected.value.length < props.brokers.length
+    selected.value.length > 0 &&
+    selected.value.length < (props.brokers?.length || 0)
 );
 </script>

@@ -47,7 +47,8 @@
                       type="checkbox"
                       class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
                       :checked="
-                        indeterminate || selected.length === maxTagCount
+                        indeterminate ||
+                        (selected.length === maxTagCount && maxTagCount != 0)
                       "
                       :indeterminate="indeterminate"
                       @change="
@@ -90,7 +91,7 @@
               <tbody class="divide-y divide-gray-200 bg-white">
                 <template v-for="tagGroup in brokerTags" :key="tagGroup.id">
                   <tr
-                    v-if="tagGroup.expand.tags"
+                    v-if="tagGroup.expand['mqtt_tag(broker)']"
                     class="border-t border-gray-200"
                   >
                     <th
@@ -102,7 +103,7 @@
                     </th>
                   </tr>
                   <tr
-                    v-for="tag in tagGroup.expand.tags"
+                    v-for="tag in tagGroup.expand['mqtt_tag(broker)']"
                     :key="tag.id"
                     :class="[selected.includes(tag.id) && 'bg-gray-50']"
                   >
@@ -167,7 +168,7 @@ interface IBrokerTags {
   id: string;
   name: string;
   expand: {
-    tags: ITags[];
+    "mqtt_tag(broker)": ITags[];
   };
 }
 interface ITags {
@@ -181,7 +182,7 @@ interface ITags {
 
 const props = defineProps({
   brokerTags: {
-    required: true,
+    required: false,
     type: Array as PropType<IBrokerTags[]>,
   },
 });
@@ -189,8 +190,9 @@ const props = defineProps({
 const selected = ref<string[]>([]);
 const checked = ref(false);
 let maxTagCount = 0;
-props.brokerTags.forEach((tag) => {
-  maxTagCount += tag.expand.tags?.length;
+props.brokerTags?.forEach((tag) => {
+  if (tag.expand["mqtt_tag(broker)"]?.length)
+    maxTagCount += tag.expand["mqtt_tag(broker)"]?.length;
 });
 const indeterminate = computed(
   () => selected.value.length > 0 && selected.value.length < maxTagCount
@@ -198,8 +200,9 @@ const indeterminate = computed(
 
 const selectAllTagIds = () => {
   let ids: string[] = [];
-  props.brokerTags.forEach((brokerTag) => {
-    ids.push(...brokerTag.expand.tags.map((p) => p.id));
+  props.brokerTags?.forEach((brokerTag) => {
+    if (!brokerTag.expand["mqtt_tag(broker)"]) return;
+    ids.push(...brokerTag.expand["mqtt_tag(broker)"]?.map((p) => p.id));
   });
   return ids;
 };
