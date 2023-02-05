@@ -109,7 +109,6 @@ export default defineNuxtPlugin(async () => {
   addRouteMiddleware(
     "pocketbase-auth",
     (to) => {
-      console.log("jup ", to);
       // Do not redirect for login and callback pages
       if (["/login"].includes(to.path)) {
         return;
@@ -119,7 +118,7 @@ export default defineNuxtPlugin(async () => {
         return "/login";
       }
     },
-    { global: false }
+    { global: true }
   );
 
   return {
