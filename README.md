@@ -1,4 +1,72 @@
-# Nuxt 3 Minimal Starter
+# Simple monolithic IOT Hub
+
+This is a simple example on how to implement complex system logic with up to date tools. Not perfect at all but capable of doing lot of things..
+
+## Architecture
+
+```mermaid
+ ---
+title: Services
+---
+flowchart TB
+subgraph Cloud
+    devices-->idbroker[MQTT Broker]
+end
+
+idbroker[MQTT Broker]-->client
+
+subgraph System
+    direction RL
+    client-->idchannel[[Message Queue]]
+    idchannel[[Message Queue]]-->apitdb
+    idchannel[[Message Queue]]<-->idinterapi
+
+    subgraph Frontend
+        direction TB
+        frontenddash[Dashboard/Data]
+        frontendconf[Config]
+    end
+
+    API-->frontenddash
+    frontendconf-->API
+    apitdb-->frontenddash
+
+    subgraph Pocketbase
+        direction TB
+        API<-->Auth<-->iddb1[(SQLite )]
+        API<-->Storage<-->iddb1[(SQLite )]
+        API<-->Data<-->iddb1[(SQLite )]
+    end
+
+    API-->config
+    API-->apitdbConfig
+
+    subgraph MQTT Connector
+        direction TB
+        config-->client
+
+    end
+
+    subgraph Historian
+        direction TB
+        apitdbConfig[Config]-->iddb2[(InfluxDB)]
+        apitdb[API]<-->iddb2
+    end
+
+    subgraph Data Interpreter
+        direction TB
+        idinterapi[API]<-->logic
+
+    end
+end
+
+
+
+```
+
+<br>
+
+# Nuxt setup
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
