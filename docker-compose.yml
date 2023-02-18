@@ -1,0 +1,24 @@
+services:
+  pocketbase:
+    image: toblu/pocketbase:0.12.3
+    restart: unless-stopped
+    command: --encryptionEnv ENCRYPTION #optional
+    environment:
+      ENCRYPTION: "DU4mxaAsT6ex5iiJ4xs0V8aF4NOGTNGL" #optional
+    networks:
+      - iot-hub
+    ports:
+      - "8090:8080"
+    volumes:
+      - iot-hub-pb-data:/pb_data
+    healthcheck: #optional (recommended) since v0.10.0
+      test: wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  iot-hub-pb-data:
+
+networks:
+  iot-hub:

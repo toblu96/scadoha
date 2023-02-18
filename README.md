@@ -66,6 +66,28 @@ end
 
 <br>
 
+# Run application
+
+There is a docker-compose file provided to spin up all necessary services for this application. Just spin up the compose file.
+
+```bash
+docker compose up -d
+```
+
+Your services are available here:
+
+`Pocketbase Admin UI`: &emsp; http://localhost:8090/\_/
+
+# Pocketbase
+
+As of today, Pocketbase does not offer an official docker image on any remote registry. Therefor we need to manually build it.
+
+## Build Docker image
+
+```bash
+docker build -t <username>/pocketbase:<tag> .
+```
+
 # Nuxt setup
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
