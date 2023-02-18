@@ -174,15 +174,38 @@
         }
       },
       {
-        "id": "rezwqwsd",
-        "name": "url",
-        "type": "url",
+        "id": "ps2ollef",
+        "name": "enabled",
+        "type": "bool",
+        "system": false,
+        "required": false,
+        "unique": false,
+        "options": {}
+      },
+      {
+        "id": "wym8fxcj",
+        "name": "host",
+        "type": "text",
         "system": false,
         "required": false,
         "unique": false,
         "options": {
-          "exceptDomains": null,
-          "onlyDomains": null
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "7kbw9nok",
+        "name": "port",
+        "type": "text",
+        "system": false,
+        "required": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
         }
       },
       {
@@ -199,7 +222,7 @@
         }
       }
     ],
-    "listRule": "project.members ~ @request.auth.id",
+    "listRule": "project.members ~ @request.auth.id || @request.auth.service_name = \"mqtt-connector\"",
     "viewRule": "project.members ~ @request.auth.id",
     "createRule": null,
     "updateRule": null,
@@ -265,8 +288,8 @@
         }
       }
     ],
-    "listRule": "broker.project.members ~ @request.auth.id",
-    "viewRule": "broker.project.members ~ @request.auth.id",
+    "listRule": "broker.project.members ~ @request.auth.id || @request.auth.service_name = \"mqtt-connector\"",
+    "viewRule": "broker.project.members ~ @request.auth.id || @request.auth.service_name = \"mqtt-connector\"",
     "createRule": null,
     "updateRule": null,
     "deleteRule": null,
