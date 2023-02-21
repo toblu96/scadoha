@@ -76,9 +76,12 @@ docker compose up -d
 
 Your services are available here:
 
-`Pocketbase Admin UI`: &emsp; http://localhost:8090/\_/
+- `Pocketbase Admin UI`: &emsp; http://localhost:8090/\_/ <br>
+- `SigNoz UI`: &emsp; http://localhost:3301/
 
 # Pocketbase
+
+> Open Source backend for your next SaaS and Mobile app in 1 file
 
 As of today, Pocketbase does not offer an official docker image on any remote registry. Therefor we need to manually build it.
 
@@ -86,6 +89,17 @@ As of today, Pocketbase does not offer an official docker image on any remote re
 
 ```bash
 docker build -t <username>/pocketbase:<tag> .
+```
+
+# SigNoz
+
+> Opensource APM - Self Hosted Observability with Traces, Logs and Metrics in a single pane
+
+Run SigNoz as an separate docker stack using the [official setup](https://signoz.io/docs/install/docker/#install-signoz-using-docker-compose) for docker compose.
+
+```bash
+git clone -b main https://github.com/SigNoz/signoz.git && cd signoz/deploy/
+docker-compose -f docker/clickhouse-setup/docker-compose.yaml up -d
 ```
 
 # Nuxt setup

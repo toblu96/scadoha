@@ -1,6 +1,8 @@
 import PocketBase, { RecordAuthResponse, Record } from "pocketbase";
 import eventsource from "eventsource"; // see https://github.com/pocketbase/js-sdk#nodejs-via-npm
 import { Client, connect } from "mqtt";
+import { getServiceLogger } from "../../modules/logger";
+import { Logger } from "winston";
 
 // @ts-ignore
 globalThis.EventSource = eventsource;
@@ -67,19 +69,27 @@ interface IPluginState {
   pb: PocketBase;
   pbAuthData: RecordAuthResponse<Record>;
   connectedBrokers: IConnectedBrokers;
+  logger: Logger;
 }
 export default defineNitroPlugin(async (nitroApp) => {
-  console.log("[MQTT Connector] Starting..");
+  // init service logger
+  let logger = getServiceLogger("MQTT Connector");
+
+  logger.info("Starting service..");
 
   // get pb auth
   let { pb, auth, error } = await getPBAuth();
-  if (error) return;
+  if (error) {
+    logger.error(`Could not get PB auth: ${error}`);
+    return;
+  }
 
   // plugin state
   let pluginState: IPluginState = {
     pb: pb as PocketBase,
     pbAuthData: auth as RecordAuthResponse<Record>,
     connectedBrokers: new Map<string, IBroker>(),
+    logger,
   };
 
   // init pb listeners
@@ -203,7 +213,6 @@ const getPBAuth = async (): Promise<{
       error: undefined,
     };
   } catch (error: any) {
-    console.error("[MQTT Connector] Could not get PB auth: ", error.message);
     return {
       error: error.message,
     };
@@ -264,8 +273,8 @@ const connectMQTTBroker = (
   const currentClient = pluginState.connectedBrokers.get(brokerSettings.id);
   if (currentClient) {
     currentClient.client.end();
-    console.log(
-      `[MQTT Connector] Broker connection '${brokerSettings.id}' ended, start reconnecting with new settings..`
+    pluginState.logger.info(
+      `Broker connection '${brokerSettings.id}' ended, start reconnecting with new settings..`
     );
   }
 
@@ -284,8 +293,8 @@ const connectMQTTBroker = (
     pluginState.connectedBrokers.get(brokerSettings.id)!.state = "Connected";
   });
   client.on("message", (topic, payload, packet) => {
-    console.log(
-      `[MQTT Connector] Got message from broker '${brokerSettings.host} - ${
+    pluginState.logger.info(
+      `Got message from broker '${brokerSettings.host} - ${
         brokerSettings.id
       }' on topic '${topic}': ${payload.toString()}`
     );
@@ -294,12 +303,12 @@ const connectMQTTBroker = (
   });
 
   client.on("error", (err) => {
-    console.error("[MQTT Connector] ", err.message);
+    pluginState.logger.error(err.message);
     pluginState.connectedBrokers.get(brokerSettings.id)!.state = err.message;
   });
 
   client.on("end", () => {
-    console.log("[MQTT Connector] Connection ended");
+    pluginState.logger.info("Connection ended");
     pluginState.connectedBrokers.get(brokerSettings.id)!.state =
       "Connection ended";
   });
@@ -318,7 +327,7 @@ const deleteMQTTBroker = (pluginState: IPluginState, brokerId: string) => {
     broker.client.once("end", () => {
       // wait until broker is disconnected before removing local state
       pluginState.connectedBrokers.delete(brokerId);
-      console.log(`[MQTT Connector] Broker '${brokerId}' disconnected`);
+      pluginState.logger.info(`Broker '${brokerId}' disconnected`);
     });
   }
 };
@@ -329,9 +338,8 @@ const subscribeTopic = (pluginState: IPluginState, tag: ITagSettings) => {
     if (broker.topics.has(tag.tagId)) {
       // handle if broker reference has changed (delete topic in previous broker) or if topic has changed
       unsubscribeTopic(pluginState, brokerId, tag.tagId);
-      console.log(
-        `[MQTT Connector] Tag '${tag.topic}' deleted from broker: `,
-        broker.client.options.host
+      pluginState.logger.info(
+        `Tag '${tag.topic}' deleted from broker: ${broker.client.options.host}`
       );
     }
   }
@@ -340,9 +348,8 @@ const subscribeTopic = (pluginState: IPluginState, tag: ITagSettings) => {
   if (broker) {
     broker.client.subscribe(tag.topic);
     broker.topics.set(tag.tagId, tag.topic);
-    console.log(
-      `[MQTT Connector] Tag '${tag.topic}' added/updated on broker: `,
-      broker.client.options.host
+    pluginState.logger.info(
+      `Tag '${tag.topic}' added/updated on broker: ${broker.client.options.host}`
     );
   }
 };
