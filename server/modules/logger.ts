@@ -1,6 +1,7 @@
 import { createLogger, format, transports } from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 
+// TODO: Add OpenTelemetry Logger implementation, posponed due to experimental feature (https://opentelemetry.io/docs/reference/specification/logs/)
 export function getServiceLogger(serviceName: string) {
   // info file transport
   const transportINFO = new DailyRotateFile({
