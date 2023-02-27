@@ -19,9 +19,6 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.7",
     "@heroicons/vue": "^2.0.13",
-    "@opentelemetry/auto-instrumentations-node": "^0.36.3",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.35.1",
-    "@opentelemetry/sdk-node": "^0.35.1",
     "eventsource": "^2.0.2",
     "mqtt": "^4.3.7",
     "pocketbase": "^0.10.1",
